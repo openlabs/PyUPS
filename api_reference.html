@@ -1,0 +1,703 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Reference &mdash; PyUPS v0.4.1 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PyUPS v0.4.1 documentation" href="index.html" />
+    <link rel="prev" title="Understanding XML Shipping Services" href="introduction.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Understanding XML Shipping Services"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PyUPS v0.4.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-ups.shipping_package">
+<span id="api-reference"></span><h1>API Reference<a class="headerlink" href="#module-ups.shipping_package" title="Permalink to this headline">¶</a></h1>
+<p>shipping_package</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">copyright:</th><td class="field-body"><ol class="first loweralpha simple" start="3">
+<li>2011 by Openlabs Technologies &amp; Consulting (P) Limited</li>
+</ol>
+</td>
+</tr>
+<tr class="field"><th class="field-name">copyright:</th><td class="field-body"><ol class="first loweralpha simple" start="3">
+<li>2010 by Sharoon Thomas.</li>
+</ol>
+</td>
+</tr>
+<tr class="field"><th class="field-name">copyright:</th><td class="field-body"><ol class="first loweralpha simple" start="3">
+<li>2011 by United Parcel Service of America (Documentation)</li>
+</ol>
+</td>
+</tr>
+<tr class="field"><th class="field-name">license:</th><td class="field-body"><p class="first last">AGPL, see LICENSE for more details.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="shipping-package-xml-api">
+<h2>Shipping Package XML API<a class="headerlink" href="#shipping-package-xml-api" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The documentation is partly extracted from the UPS Developer guide and
+is hence covered by the copyright of United Parcel Service of America</p>
+</div>
+<p>The Shipping API makes UPS shipping services available to client 
+applications that communicate with UPS using the Internet. With this API, 
+applications can prepare or schedule small package shipments, manage 
+returns, or cancel previously scheduled shipments.</p>
+<div class="section" id="two-step-phase-shipping-process">
+<h3>Two Step (Phase) Shipping Process<a class="headerlink" href="#two-step-phase-shipping-process" title="Permalink to this headline">¶</a></h3>
+<p>The process to use the Shipping API consists of two phases, the <cite>ship 
+confirm</cite> phase followed by the <cite>ship accept</cite> phase. An XML request/response
+pair is exchanged between the client and server in each phase. The XML 
+messages exchanged in the confirm phase are the ShipmentConfirmRequest 
+input message and the ShipmentConfirmResponse output message. This is 
+implemented in <a class="reference internal" href="#ups.shipping_package.ShipmentConfirm" title="ups.shipping_package.ShipmentConfirm"><tt class="xref py py-class docutils literal"><span class="pre">ShipmentConfirm</span></tt></a>.</p>
+<p>The XML messages exchanged in the accept phase are the 
+ShipmentAcceptRequest input message and the ShipmentAcceptResponse output
+message. Shipment information is specified in the ShipmentConfirmRequest 
+message. After the ShipmentConfirmRequest message is created, it must be 
+sent to the Shipping API ShipConfirm URL address, using a HTTP POST.</p>
+<p>After the ShipmentConfirmRequest message is received by the server, it is 
+preprocessed and validated. If the ShipmentConfirmRequest message passes 
+all validation tests, a ShipmentConfirmResponse message is returned 
+containing basic rate information, the shipment Id, and the shipment digest
+which can be extracted from the response using 
+<a class="reference internal" href="#ups.shipping_package.ShipmentConfirm.extract_digest" title="ups.shipping_package.ShipmentConfirm.extract_digest"><tt class="xref py py-meth docutils literal"><span class="pre">ShipmentConfirm.extract_digest()</span></tt></a>.</p>
+<p>If the ShipmentConfirmRequest message fails validation, a 
+ShipmentConfirmResponse message is returned containing error information. 
+In the event of such an error, an exception is raised.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The majority of the validation is performed in this phase but the 
+actual shipment has not been created at this point.</p>
+</div>
+<p>In order to create a shipment and receive the shipping label(s), a 
+ShipAcceptRequest message must be created and sent to the Shipping API 
+ShipAccept connection address URL, using a HTTP POST. This API is 
+implemented in the class <a class="reference internal" href="#ups.shipping_package.ShipmentAccept" title="ups.shipping_package.ShipmentAccept"><tt class="xref py py-class docutils literal"><span class="pre">ShipmentAccept</span></tt></a>.</p>
+<p>The ShipAcceptRequest message must contain the shipment digest returned in 
+the ShipmentConfirmResponse message and can be passed as an argument to
+<tt class="xref py py-meth docutils literal"><span class="pre">SipmentAccept.shipment_accept_request_type()</span></tt> method.</p>
+<p>After the ShipmentAcceptRequest message is received in the UPS server, 
+additional processing validation is performed. If the ShipmentAcceptRequest
+message passes all validation tests, a ShipmentAcceptResponse message is 
+returned containing detailed rate information, the Shipment Id, package 
+tracking numbers and the shipping label(s).</p>
+<p>If the ShipmentAcceptRequest message fails validation, a 
+ShipmentAcceptResponse message is returned containing error information. As
+in the <a class="reference internal" href="#ups.shipping_package.ShipmentConfirm" title="ups.shipping_package.ShipmentConfirm"><tt class="xref py py-class docutils literal"><span class="pre">ShipmentConfirm</span></tt></a> API an exception is raised.</p>
+<dl class="class">
+<dt id="ups.shipping_package.ShipmentConfirm">
+<em class="property">class </em><tt class="descclassname">ups.shipping_package.</tt><tt class="descname">ShipmentConfirm</tt><big>(</big><em>license_no</em>, <em>user_id</em>, <em>password</em>, <em>sandbox</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the ShipmentConfirmRequest</p>
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.address_type">
+<em class="property">classmethod </em><tt class="descname">address_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.address_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns lXML Element for the address_type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>AddressLine1</strong> &#8211; Address Line 1 (Required)</li>
+<li><strong>AddressLine2</strong> &#8211; Address Line 2 (Optional)</li>
+<li><strong>AddressLine3</strong> &#8211; Address Line 3 (Optional)</li>
+<li><strong>City</strong> &#8211; City (Required)</li>
+<li><strong>StateProviceCode</strong> &#8211; Consignee&#8217;s state or province code.(Optional)
+Required for US or Canada.
+If destination is US or CA, then the value
+must be a valid US State/Canadian
+Province code. If the country is Ireland, the
+StateProvinceCode will contain the county.</li>
+<li><strong>CountryCode</strong> &#8211; Consignee&#8217;s country code. (Required)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Only for ShipTo Address (/ShipmentRequest/Shipment/ShipTo/Address)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>residential_address_indicator</strong> &#8211; This field is a flag to 
+indicate if the receiver is a residential location. True if
+ResidentialAddressIndicator tag exists; false otherwise</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">ShipmentConfirm</span><span class="o">.</span><span class="n">address_type</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">AddressLine1</span><span class="o">=</span><span class="s">&#39;Line1&#39;</span><span class="p">,</span> <span class="n">City</span><span class="o">=</span><span class="s">&#39;City&#39;</span><span class="p">),</span> <span class="n">pretty_print</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&lt;Address&gt;</span>
+<span class="go">  &lt;City&gt;City&lt;/City&gt;</span>
+<span class="go">  &lt;AddressLine1&gt;Line1&lt;/AddressLine1&gt;</span>
+<span class="go">&lt;/Address&gt;</span>
+<span class="go">&lt;BLANKLINE&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">ShipmentConfirm</span><span class="o">.</span><span class="n">address_type</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">AddressLine1</span><span class="o">=</span><span class="s">&#39;Line1&#39;</span><span class="p">,</span> <span class="n">AddressLine2</span><span class="o">=</span><span class="s">&#39;Line2&#39;</span><span class="p">,</span> <span class="n">City</span><span class="o">=</span><span class="s">&#39;City&#39;</span><span class="p">),</span> 
+<span class="gp">... </span>    <span class="n">pretty_print</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&lt;Address&gt;</span>
+<span class="go">  &lt;City&gt;City&lt;/City&gt;</span>
+<span class="go">  &lt;AddressLine2&gt;Line2&lt;/AddressLine2&gt;</span>
+<span class="go">  &lt;AddressLine1&gt;Line1&lt;/AddressLine1&gt;</span>
+<span class="go">&lt;/Address&gt;</span>
+<span class="go">&lt;BLANKLINE&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.dimensions_type">
+<em class="property">classmethod </em><tt class="descname">dimensions_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.dimensions_type" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Code</strong> &#8211; UnitOfMeasurement/Code</li>
+<li><strong>Description</strong> &#8211; UnitOfMeasurement/Description</li>
+<li><strong>Length</strong> &#8211; </li>
+<li><strong>Width</strong> &#8211; </li>
+<li><strong>Height</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.extract_digest">
+<em class="property">classmethod </em><tt class="descname">extract_digest</tt><big>(</big><em>response</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.extract_digest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Digest from the xml response</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>response</strong> &#8211; lxml Element representing the response from UPS</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.label_image_format_type">
+<em class="property">classmethod </em><tt class="descname">label_image_format_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.label_image_format_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Label image generation format</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Code</strong> &#8211; Required if 
+ShipmentConfirmRequest/LabelSpecification/LabelPrintMethod/Code is
+equal to GIF. 
+Valid values are GIF or PNG. Only GIF is supported on the remote 
+server.</li>
+<li><strong>Description</strong> &#8211; (Optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.label_print_method_type">
+<em class="property">classmethod </em><tt class="descname">label_print_method_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.label_print_method_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The device used to print a label image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Code</strong> &#8211; <p>Label print method code that the labels are  to be 
+generated for EPL2 formatted labels use EPL, for SPL formatted 
+labels use SPL, for ZPL formatted labels use ZPL, for STAR printer 
+formatted labels use STARPL and for image formats use GIF.</p>
+<p>For shipments without return service the valid value is GIF, EPL, 
+ZPL, STARPL and SPL. For shipments with PRL return service, the 
+valid values are EPL, ZPL, STARPL, SPL and GIF.</p>
+</li>
+<li><strong>Description</strong> &#8211; Label Specification Code description</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.label_specification_type">
+<em class="property">classmethod </em><tt class="descname">label_specification_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.label_specification_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>:param LabelPrintMethod
+:param LabelImageFormat (optionally required if Print method is GIF)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.package_type">
+<em class="property">classmethod </em><tt class="descname">package_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.package_type" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PackagingType</strong> &#8211; Generated from <a class="reference internal" href="#ups.shipping_package.ShipmentConfirm.packaging_type" title="ups.shipping_package.ShipmentConfirm.packaging_type"><tt class="xref py py-meth docutils literal"><span class="pre">packaging_type()</span></tt></a></li>
+<li><strong>Description</strong> &#8211; Merchandise Description of the Package (Optional)</li>
+<li><strong>PackageWeight</strong> &#8211; Generated from <a class="reference internal" href="#ups.shipping_package.ShipmentConfirm.package_weight_type" title="ups.shipping_package.ShipmentConfirm.package_weight_type"><tt class="xref py py-meth docutils literal"><span class="pre">package_weight_type()</span></tt></a></li>
+<li><strong>Dimensions</strong> &#8211; Generated from <a class="reference internal" href="#ups.shipping_package.ShipmentConfirm.dimensions_type" title="ups.shipping_package.ShipmentConfirm.dimensions_type"><tt class="xref py py-meth docutils literal"><span class="pre">dimensions_type()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.package_weight_type">
+<em class="property">classmethod </em><tt class="descname">package_weight_type</tt><big>(</big><em>Weight</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.package_weight_type" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Weight</strong> &#8211; Packages weight. (Required)</li>
+<li><strong>Code</strong> &#8211; UnitOfMeasurement/Code (Required)</li>
+<li><strong>Description</strong> &#8211; UnitOfMeasurement/Description (optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.packaging_type">
+<em class="property">classmethod </em><tt class="descname">packaging_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.packaging_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Packaging Container
+Packaging type is required for Ground
+Freight Pricing Shipments only</p>
+<dl class="docutils">
+<dt>:param Code:01 = UPS Letter, 02 = Customer Supplied Package,</dt>
+<dd><blockquote class="first">
+<div>03 = Tube, 04 = PAK, 21 = UPS Express Box, 
+24 = UPS 25KG Box, 25 = UPS 10KG Box
+30 = Pallet
+2a = Small Express Box
+2b = Medium Express Box
+2c = Large Express Box.</div></blockquote>
+<p class="last">Note: Only packaging type code 02 is applicable to 
+Ground Freight Pricing</p>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Description</strong> &#8211; Anything sensible</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.payment_information_prepaid_type">
+<em class="property">classmethod </em><tt class="descname">payment_information_prepaid_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.payment_information_prepaid_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>A payment method must be specified for the Bill Shipper billing option.
+Therefore, either the AccountNumber child element or the CreditCard 
+child element must be provided, but not both.</p>
+<p>Container for the BillShipper billing option. The two payment methods 
+that are available for the Bill Shipper billing option are account 
+number or credit card.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>AccountNumber</strong> &#8211; Must be the same UPS account number as the one</td>
+</tr>
+</tbody>
+</table>
+<p>provided in Shipper/ShipperNumber. Either this element or the sibling 
+element CreditCard must be provided, but both may not be provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>CreditCard</strong> &#8211; Not Implemented Yet.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.payment_information_type">
+<em class="property">classmethod </em><tt class="descname">payment_information_type</tt><big>(</big><em>method</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.payment_information_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This element or its sibling element, ItemizedPaymentInformation, must 
+be present but no more than one can be present. This API does not 
+implement ItemizedPaymentInformation yet.</p>
+<p>The method must be one of:</p>
+<blockquote>
+<div>Prepaid: Use <a class="reference internal" href="#ups.shipping_package.ShipmentConfirm.payment_information_prepaid_type" title="ups.shipping_package.ShipmentConfirm.payment_information_prepaid_type"><tt class="xref py py-meth docutils literal"><span class="pre">payment_information_prepaid_type()</span></tt></a>
+BillThirdParty: Use :meth:``
+FreightCollect: use :meth:``</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="ups.shipping_package.ShipmentConfirm.request">
+<tt class="descname">request</tt><big>(</big><em>shipment_confirm_request</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls up UPS and send the request. Get the returned response
+and return an element built out of it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shipment_confirm_request</strong> &#8211; lxml element with data for the</td>
+</tr>
+</tbody>
+</table>
+<p>shipment_confirm_request</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.service_type">
+<em class="property">classmethod </em><tt class="descname">service_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.service_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>UPS service type (This is as of the day of documenting, please
+check with the latest documentation of UPS for the same)</p>
+<dl class="docutils">
+<dt>:param Code <span class="classifier-delimiter">:</span> <span class="classifier">Values are: </span></dt>
+<dd><p class="first">01 = Next Day Air, 
+02 = 2nd Day Air, 
+03 = Ground, 
+07 = Express, 
+08 = Expedited, 
+11 = UPS Standard, 
+12 = 3 Day Select, 
+13 = Next Day Air Saver, 
+14 = Next Day Air Early AM, 
+54 = Express Plus, 
+59 = 2nd Day Air A.M., 
+65 = UPS Saver.
+82 = UPS Today Standard 
+83 = UPS Today Dedicated Courier 
+84 = UPS Today Intercity
+85 = UPS Today Express 
+86 = UPS Today Express Saver. 
+Note: Only service code 03 is used for</p>
+<blockquote class="last">
+<div>Ground Freight Pricing shipments</div></blockquote>
+</dd>
+</dl>
+<p>The following Services are not
+available to return shipment:</p>
+<blockquote>
+<div>13 = Next Day Air Saver,
+14 = Next Day Air Early AM, 
+59 = 2nd Day Air A.M.
+82 = UPS Today Standard
+83 = UPS Today Dedicated Courier
+84 = UPS Today Intercity
+85 = UPS Today Express
+86 = UPS Today Express Saver.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Description</strong> &#8211; Description of the service code. Examples
+are Next Day Air, Worldwide Express, and
+Ground.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.ship_from_type">
+<em class="property">classmethod </em><tt class="descname">ship_from_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.ship_from_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the ship from data type (/ShipmentRequest/Shipment/ShipFrom)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>CompanyName</strong> &#8211; (Required)</li>
+<li><strong>AttentionName</strong> &#8211; (Required)</li>
+<li><strong>TaxIdentificationNumber</strong> &#8211; (Required)</li>
+<li><strong>PhoneNumber</strong> &#8211; (Required)</li>
+<li><strong>FaxNumber</strong> &#8211; (Optional)</li>
+<li><strong>EMailAddress</strong> &#8211; (Optional)</li>
+<li><strong>Address</strong> &#8211; (Optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.ship_phone_type">
+<em class="property">classmethod </em><tt class="descname">ship_phone_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.ship_phone_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns lXML Element for the phone_type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Number</strong> &#8211; TODO</li>
+<li><strong>Extension</strong> &#8211; TODO (Optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">ShipmentConfirm</span><span class="o">.</span><span class="n">ship_phone_type</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">Number</span><span class="o">=</span><span class="s">&#39;number&#39;</span><span class="p">,</span> <span class="n">Extension</span><span class="o">=</span><span class="s">&#39;extn&#39;</span><span class="p">),</span> 
+<span class="gp">... </span>    <span class="n">pretty_print</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&lt;Phone&gt;</span>
+<span class="go">  &lt;Number&gt;number&lt;/Number&gt;</span>
+<span class="go">  &lt;Extension&gt;extn&lt;/Extension&gt;</span>
+<span class="go">&lt;/Phone&gt;</span>
+<span class="go">&lt;BLANKLINE&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.ship_to_type">
+<em class="property">classmethod </em><tt class="descname">ship_to_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.ship_to_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the ship to data type. (/ShipmentRequest/Shipment/ShipTo)
+:param CompanyName: (Required)
+:param AttentionName: (Required)
+:param TaxIdentificationNumber: (Required)
+:param PhoneNumber: (Required)
+:param FaxNumber: (Optional)
+:param EMailAddress: (Optional)
+:param Address: (Optional)
+:param LocationID: (Optional)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.shipment_confirm_request_type">
+<em class="property">classmethod </em><tt class="descname">shipment_confirm_request_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.shipment_confirm_request_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a ShipmentConfirmRequest. All elements other than the 
+description are required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Shipper</strong> &#8211; Shipper Element generated by :meth:shipper_type</li>
+<li><strong>ShipTo</strong> &#8211; ShipTo element generated by :meth:ship_to_type</li>
+<li><strong>ShipFrom</strong> &#8211; ShipFrom element generated by :meth:ship_from_type</li>
+<li><strong>Service</strong> &#8211; Service element generated by :meth:service_type</li>
+<li><strong>PaymentInformation</strong> &#8211; PaymentInformation element generated by
+:meth: payment_information_type</li>
+<li><strong>ShipmentServiceOptions</strong> &#8211; ShipmentServiceOptions element generated
+by :meth: shipment_service_options_type</li>
+<li><strong>LabelSpecification</strong> &#8211; LabelSpecification option generated by the
+:meth: label_specification_type (Optional - defaults to GIF)</li>
+<li><strong>Description</strong> &#8211; Description (optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.shipment_service_option_type">
+<em class="property">classmethod </em><tt class="descname">shipment_service_option_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.shipment_service_option_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Service Options:</p>
+<ol class="arabic simple">
+<li>SaturdayDelivery: Available to all shipment types.</li>
+</ol>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">It may not be possible to book saturday deliveries more than two 
+days in advance. Or in other words, SatudayDelivery can usually be
+made only on bookings of Thrusday or Friday.</p>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentConfirm.shipper_type">
+<em class="property">classmethod </em><tt class="descname">shipper_type</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.shipper_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the shipper data type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Name</strong> &#8211; (Required)</li>
+<li><strong>ShipperNumber</strong> &#8211; (Required)</li>
+<li><strong>AttentionName</strong> &#8211; (Required)</li>
+<li><strong>TaxIdentificationNumber</strong> &#8211; (Required)</li>
+<li><strong>PhoneNumber</strong> &#8211; (Required)</li>
+<li><strong>FaxNumber</strong> &#8211; (Optional)</li>
+<li><strong>EMailAddress</strong> &#8211; (Optional)</li>
+<li><strong>Address</strong> &#8211; (Optional)</li>
+<li><strong>LocationID</strong> &#8211; (Optional)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ups.shipping_package.ShipmentConfirm.url">
+<tt class="descname">url</tt><a class="headerlink" href="#ups.shipping_package.ShipmentConfirm.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates the URL with the Base URL</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ups.shipping_package.ShipmentAccept">
+<em class="property">class </em><tt class="descclassname">ups.shipping_package.</tt><tt class="descname">ShipmentAccept</tt><big>(</big><em>license_no</em>, <em>user_id</em>, <em>password</em>, <em>sandbox</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentAccept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the ShipmentAcceptRequest</p>
+<dl class="method">
+<dt id="ups.shipping_package.ShipmentAccept.request">
+<tt class="descname">request</tt><big>(</big><em>shipment_accept_request</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentAccept.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls up UPS and send the request. Get the returned response
+and return an element built out of it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shipment_confirm_request</strong> &#8211; lxml element with data for the</td>
+</tr>
+</tbody>
+</table>
+<p>shipment_confirm_request</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ups.shipping_package.ShipmentAccept.shipment_accept_request_type">
+<em class="property">classmethod </em><tt class="descname">shipment_accept_request_type</tt><big>(</big><em>digest</em><big>)</big><a class="headerlink" href="#ups.shipping_package.ShipmentAccept.shipment_accept_request_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ups.shipping_package.ShipmentAccept.url">
+<tt class="descname">url</tt><a class="headerlink" href="#ups.shipping_package.ShipmentAccept.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates the URL with the Base URL</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<dl class="exception">
+<dt id="ups.shipping_package.PyUPSException">
+<em class="property">exception </em><tt class="descclassname">ups.shipping_package.</tt><tt class="descname">PyUPSException</tt><a class="headerlink" href="#ups.shipping_package.PyUPSException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API Reference</a><ul>
+<li><a class="reference internal" href="#shipping-package-xml-api">Shipping Package XML API</a><ul>
+<li><a class="reference internal" href="#two-step-phase-shipping-process">Two Step (Phase) Shipping Process</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="introduction.html"
+                        title="previous chapter">Understanding XML Shipping Services</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_reference.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Understanding XML Shipping Services"
+             >previous</a> |</li>
+        <li><a href="index.html">PyUPS v0.4.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Openlabs Technologies &amp; Consulting (P) Limited.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
