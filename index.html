@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -6,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to PyUPS’s documentation! &mdash; PyUPS v0.4.1 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <title>Welcome to PyUPS’s documentation! &mdash; PyUPS v0.4.2 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.1',
+        VERSION:     '0.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +22,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="PyUPS v0.4.1 documentation" href="#" />
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="top" title="PyUPS v0.4.2 documentation" href="#" />
     <link rel="next" title="Understanding XML Shipping Services" href="introduction.html" /> 
   </head>
   <body>
@@ -37,7 +39,7 @@
         <li class="right" >
           <a href="introduction.html" title="Understanding XML Shipping Services"
              accesskey="N">next</a> |</li>
-        <li><a href="#">PyUPS v0.4.1 documentation</a> &raquo;</li> 
+        <li><a href="#">PyUPS v0.4.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,7 +50,6 @@
             
   <div class="section" id="welcome-to-pyups-s-documentation">
 <h1>Welcome to PyUPS&#8217;s documentation!<a class="headerlink" href="#welcome-to-pyups-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Understanding XML Shipping Services</a><ul>
@@ -58,20 +59,36 @@
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api_reference.html#shipping-package-xml-api">Shipping Package XML API</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api_reference.html#two-step-phase-shipping-process">Two Step (Phase) Shipping Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_reference.html#api-design-pattern">API design pattern</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api_reference.html#integrating-your-application-with-this-api">Integrating your application with this API</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#shipment-confirmation-request">Shipment Confirmation Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#shipment-accept-request">Shipment Accept Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#base-class">Base Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#exceptions">Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About Openlabs Technologies and Consulting Private Limited</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="about.html#technical-support">Technical Support</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="section" id="downloads">
+<h2>Downloads<a class="headerlink" href="#downloads" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference download internal" href="_downloads/LICENSE7"><tt class="xref download docutils literal"><span class="pre">Affero</span> <span class="pre">GNU</span> <span class="pre">Public</span> <span class="pre">License</span></tt></a>.</li>
+</ul>
 </div>
 <div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
 <li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
 <li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
 </ul>
+</div>
 </div>
 
 
@@ -80,12 +97,16 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/128-128.png" alt="Logo"/>
+            </a></p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to PyUPS&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#downloads">Downloads</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
@@ -125,7 +146,7 @@
         <li class="right" >
           <a href="introduction.html" title="Understanding XML Shipping Services"
              >next</a> |</li>
-        <li><a href="#">PyUPS v0.4.1 documentation</a> &raquo;</li> 
+        <li><a href="#">PyUPS v0.4.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
