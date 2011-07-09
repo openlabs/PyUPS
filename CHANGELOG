@@ -1,18 +1,23 @@
 .. -*- restructuredtext -*-
+
+=========
+Changelog
+=========
+
 Version 0.4.1
-=============
- * Made unittest2 a dependency since all tests are powered by it.
+===============
+  * Made unittest2 a dependency since all tests are powered by it.
 
 Version 0.4
-===========
- * Refactored for new quality standards
- * Converted most instance methods to class methods for better 
+=============
+  * Refactored for new quality standards
+  * Converted most instance methods to class methods for better 
    and simplified usage
 
 Version 0.2
-===========
- * Facility for Saturday Shipping
+=============
+  * Facility for Saturday Shipping
  
  Version 0.2.1
-===========
- * Facility for Shipment Description
+================
+  * Facility for Shipment Description
