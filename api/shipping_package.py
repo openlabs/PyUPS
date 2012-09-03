@@ -831,8 +831,8 @@ class ShipmentConfirm(BaseAPIClient):
     def label_specification_type(cls, *args, **kwargs):
         """
 
-        :param LabelPrintMethod
-        :param LabelImageFormat (optionally required if Print method is GIF)
+        :param LabelPrintMethod:
+        :param LabelImageFormat: (optionally required if Print method is GIF)
         """
         return E.LabelSpecification(*cls.make_elements(
             ['LabelPrintMethod'], args, kwargs))
