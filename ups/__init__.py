@@ -8,7 +8,8 @@
     :license: AGPL, see LICENSE for more details
 '''
 __author__ = 'Openlabs Technologies & Consulting (P) LTD'
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 
 
-from .shipping_package import ShipmentConfirm, ShipmentAccept, PyUPSException
+from .shipping_package import ShipmentConfirm, ShipmentAccept, ShipmentVoid
+from .shipping_package import PyUPSException
