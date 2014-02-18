@@ -205,9 +205,7 @@
 """
 from __future__ import with_statement
 
-from logging import getLogger, StreamHandler, Formatter, getLoggerClass, DEBUG
 from threading import Lock
-import urllib2
 
 from lxml import etree, objectify
 from lxml.builder import E
@@ -236,7 +234,7 @@ class ShipmentConfirm(BaseAPIClient):
     # TransactionReference identifies transactions between client and server.
     TransactionReference = E.TransactionReference(
         E.CustomerContext('unspecified')
-        )
+    )
 
     @classmethod
     def ship_phone_type(cls, *args, **kwargs):
@@ -308,8 +306,8 @@ class ShipmentConfirm(BaseAPIClient):
         # states and provices outside CA and US. So generate a warning, if the
         # country is not US or CA and a StateProviceCode is given
         data = dict(((e.tag, e.text) for e in elements))
-        if 'CountryCode' in data and 'StateProviceCode' in data \
-            and data['CountryCode'] not in ('US', 'CA'):
+        if 'CountryCode' in data and 'StateProviceCode' in data and data[
+                'CountryCode'] not in ('US', 'CA'):
             cls.logger.warn(
                 "StateProvinceCode are required only for CA and US")
 
@@ -538,13 +536,13 @@ class ShipmentConfirm(BaseAPIClient):
         uom_dict = {
             'Code': kwargs['Code'],
             'Description': kwargs.get('Description', "")
-            }
+        }
         return E.Dimensions(
             E.UnitOfMeasurement(*cls.make_elements(['Code'], [], uom_dict)),
             E.Length(kwargs['Length']),
             E.Width(kwargs['Width']),
             E.Height(kwargs['Height']),
-            )
+        )
 
     @classmethod
     def package_service_options_type(cls, *args, **kwargs):
@@ -596,7 +594,7 @@ class ShipmentConfirm(BaseAPIClient):
         """
         values = {
             'Code': 'GIF'
-            }
+        }
         values.update(kwargs)
 
         if args:
@@ -621,7 +619,7 @@ class ShipmentConfirm(BaseAPIClient):
         """
         values = {
             'Code': 'GIF'
-            }
+        }
         values.update(kwargs)
 
         if args:
@@ -665,7 +663,7 @@ class ShipmentConfirm(BaseAPIClient):
             cls.RequestAction,
             cls.RequestOption,
             cls.TransactionReference,
-            )
+        )
 
         # Guess the LabelSpecification if nothing is provided
         # /ShipmentConfirmRequest/LabelSpecification
@@ -673,7 +671,7 @@ class ShipmentConfirm(BaseAPIClient):
             label_specification = cls.label_specification_type(
                 cls.label_print_method_type(),
                 cls.label_image_format_type()
-                )
+            )
         else:
             label_specification = kwargs.pop('LabelSpecification')
 
@@ -686,7 +684,7 @@ class ShipmentConfirm(BaseAPIClient):
         elements = cls.make_elements([
             'Shipper', 'ShipTo', 'ShipFrom',
             'Service', 'PaymentInformation',
-            ], args, kwargs)
+        ], args, kwargs)
 
         # The shipment element due to above reason is just generated from the
         # values as the tag names already exist in the constructed element
@@ -707,7 +705,7 @@ class ShipmentConfirm(BaseAPIClient):
         return '/'.join([
             self.base_url[self.sandbox and 'sandbox' or 'production'],
             'ShipConfirm']
-            )
+        )
 
     def request(self, shipment_confirm_request):
         """Calls up UPS and send the request. Get the returned response
@@ -722,7 +720,7 @@ class ShipmentConfirm(BaseAPIClient):
             etree.tostring(self.access_request, pretty_print=True),
             '<?xml version="1.0" encoding="UTF-8" ?>',
             etree.tostring(shipment_confirm_request, pretty_print=True),
-            ])
+        ])
         self.logger.debug("Request XML: %s", full_request)
 
         # Send the request
@@ -765,7 +763,7 @@ class ShipmentAccept(BaseAPIClient):
     # TransactionReference identifies transactions between client and server.
     TransactionReference = E.TransactionReference(
         E.CustomerContext('unspecified')
-        )
+    )
 
     @classmethod
     def shipment_accept_request_type(cls, digest):
@@ -776,7 +774,7 @@ class ShipmentAccept(BaseAPIClient):
             cls.RequestAction,
             cls.RequestOption,
             cls.TransactionReference,
-            )
+        )
 
         # /ShipmentAcceptRequest/ShipmentDigest
         digest_element = E.ShipmentDigest(digest)
@@ -789,7 +787,7 @@ class ShipmentAccept(BaseAPIClient):
         return '/'.join([
             self.base_url[self.sandbox and 'sandbox' or 'production'],
             'ShipAccept']
-            )
+        )
 
     def request(self, shipment_accept_request):
         """Calls up UPS and send the request. Get the returned response
@@ -803,7 +801,7 @@ class ShipmentAccept(BaseAPIClient):
             etree.tostring(self.access_request, pretty_print=True),
             '<?xml version="1.0" encoding="UTF-8" ?>',
             etree.tostring(shipment_accept_request, pretty_print=True),
-            ])
+        ])
         self.logger.debug("Request XML: %s", full_request)
 
         # Send the request
@@ -830,7 +828,7 @@ class ShipmentVoid(BaseAPIClient):
     # TransactionReference identifies transactions between client and server.
     TransactionReference = E.TransactionReference(
         E.CustomerContext('unspecified')
-        )
+    )
 
     @classmethod
     def void_shipment_request_type(cls, shipment_id, tracking_ids):
@@ -841,7 +839,7 @@ class ShipmentVoid(BaseAPIClient):
             cls.RequestAction,
             cls.RequestOption,
             cls.TransactionReference,
-            )
+        )
 
         expanded_void_shipment = [
             E.TrackingNumber(packet) for packet in tracking_ids
@@ -860,7 +858,7 @@ class ShipmentVoid(BaseAPIClient):
         return '/'.join([
             self.base_url[self.sandbox and 'sandbox' or 'production'],
             'Void']
-            )
+        )
 
     def request(self, shipment_void_request):
         """Calls up UPS and send the request. Get the returned response
@@ -874,7 +872,7 @@ class ShipmentVoid(BaseAPIClient):
             etree.tostring(self.access_request, pretty_print=True),
             '<?xml version="1.0" encoding="UTF-8" ?>',
             etree.tostring(shipment_void_request, pretty_print=True),
-            ])
+        ])
         self.logger.debug("Request XML: %s", full_request)
 
         # Send the request
