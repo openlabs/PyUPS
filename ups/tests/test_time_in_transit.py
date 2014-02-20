@@ -13,7 +13,7 @@ from datetime import datetime
 
 import unittest2 as unittest
 
-from ups import TimeInTransit, PyUPSException
+from ups import TimeInTransit
 
 
 class TestTimeInTransit(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestTimeInTransit(unittest.TestCase):
             os.environ['UPS_USER_ID'],
             os.environ['UPS_PASSWORD'],
             True            # Test must be performed in sandbox anyway
-            )
+        )
 
     def test_time_in_transit(self):
         time_in_transit_request = TimeInTransit.time_in_transit_request_type(
@@ -49,14 +49,14 @@ class TestTimeInTransit(unittest.TestCase):
                 PoliticalDivision2="Zapopan",
                 PoliticalDivision1="JAL",
                 CountryCode="MX",
-                PostcodePrimaryLow="45150",            
+                PostcodePrimaryLow="45150",
             ),
             TimeInTransit.transit_from_type(
                 PoliticalDivision2="Aachen",
                 CountryCode="DE",
-                PostcodePrimaryLow="52064", 
+                PostcodePrimaryLow="52064",
             ),
-            TimeInTransit.shipment_weight_type('14.1',Code='KGS'),
+            TimeInTransit.shipment_weight_type('14.1', Code='KGS'),
             TimeInTransit.invoice_line_total_type(
                 MonetaryValue='120',
                 CurrencyCode='EUR',
@@ -65,7 +65,7 @@ class TestTimeInTransit(unittest.TestCase):
             PickupDate=datetime.now().strftime('%Y%m%d'),
             Time='1830',
             DocumentsOnlyIndicator='02',
-            MaximumListSize='45'            
+            MaximumListSize='45'
         )
         resp = self.time_in_transit_api.request(time_in_transit_request)
         assert resp['Response']['ResponseStatusCode'] == 1
@@ -77,7 +77,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTests(
         unittest.TestLoader().loadTestsFromTestCase(TestTimeInTransit)
-        )
+    )
     return suite
 
 

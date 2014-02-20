@@ -7,6 +7,3 @@
     :copyright: (c) 2010 by Sharoon Thomas.
     :license: AGPL, see LICENSE for more details
 '''
-from .shipping_package import ShipmentConfirm, ShipmentAccept, ShipmentVoid
-from .time_in_transit import TimeInTransit
-from .base import PyUPSException

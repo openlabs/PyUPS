@@ -6,7 +6,6 @@ from logging import getLogger, StreamHandler, Formatter, getLoggerClass, DEBUG
 from threading import Lock
 import urllib2
 
-from lxml import etree, objectify
 from lxml.builder import E
 
 
@@ -41,7 +40,7 @@ class BaseAPIClient(object):
     base_url = {
         'sandbox': "https://wwwcie.ups.com/ups.app/xml",
         'production': "https://www.ups.com/ups.app/xml/"
-        }
+    }
 
     #: The logging format used for the debug logger.  This is only used when
     #: the application is in debug mode, otherwise the attached logging
@@ -161,7 +160,7 @@ class BaseAPIClient(object):
                     error.ErrorSeverity.pyval,
                     error.ErrorCode.pyval,
                     error.ErrorDescription.pyval,
-                    ), request, response)
+                ), request, response)
 
     @property
     def access_request(self):
@@ -188,7 +187,7 @@ class BaseAPIClient(object):
                 E.Password(self.password),
                 E.UserId(self.user_id),
                 E.AccessLicenseNumber(self.license_no)
-                )
+            )
 
     @classmethod
     def make_elements(cls, required_keys, args, kwargs):
@@ -228,7 +227,7 @@ class BaseAPIClient(object):
         if difference:
             raise ValueError(
                 'Attributes %s is/are required.' % ','.join(difference)
-                )
+            )
 
         return [E(k, v) for k, v in kwargs.iteritems()] + list(args)
 

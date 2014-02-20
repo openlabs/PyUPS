@@ -19,7 +19,8 @@ from datetime import datetime
 
 import unittest2 as unittest
 
-from ups import ShipmentConfirm, ShipmentAccept, PyUPSException
+from ups.shipping_package import ShipmentConfirm, ShipmentAccept, \
+    PyUPSException
 from helper import ShippingPackageHelper as Helper
 
 
@@ -51,27 +52,28 @@ class TestShippingPackage(unittest.TestCase):
             os.environ['UPS_USER_ID'],
             os.environ['UPS_PASSWORD'],
             True            # Test must be performed in sandbox anyway
-            )
+        )
 
         self.shipment_accept_api = ShipmentAccept(
             os.environ['UPS_LICENSE_NO'],
             os.environ['UPS_USER_ID'],
             os.environ['UPS_PASSWORD'],
             True            # Test must be performed in sandbox anyway
-            )
+        )
 
     def test_0010_blow_up(self):
         """Send a stupid request which should blow up because its valid in the
         client but not in UPS server. Example: dont send packages"""
         with self.assertRaises(PyUPSException):
-            ship_confirm_request = ShipmentConfirm.shipment_confirm_request_type(
-                Helper.get_shipper(self.shipper_number, "GB"),
-                Helper.get_ship_to("GB"),
-                Helper.get_ship_from("GB"),
+            ship_confirm_request = \
+                ShipmentConfirm.shipment_confirm_request_type(
+                    Helper.get_shipper(self.shipper_number, "GB"),
+                    Helper.get_ship_to("GB"),
+                    Helper.get_ship_from("GB"),
 
-                Helper.get_payment_info(AccountNumber=self.shipper_number),
-                ShipmentConfirm.service_type(Code='11'),    # UPS Standard
-                Description = __doc__[:50]
+                    Helper.get_payment_info(AccountNumber=self.shipper_number),
+                    ShipmentConfirm.service_type(Code='11'),    # UPS Standard
+                    Description=__doc__[:50]
                 )
             self.shipment_confirm_api.request(ship_confirm_request)
 
@@ -83,23 +85,25 @@ class TestShippingPackage(unittest.TestCase):
             Helper.get_ship_from("GB"),
 
             # Package 1
-            Helper.get_package("GB", weight='15.0', 
-                package_type_code='02'),    # Customer Supplied Package
+            Helper.get_package(
+                "GB", weight='15.0', package_type_code='02'
+            ),  # Customer Supplied Package
 
             # Package 2
-            Helper.get_package("GB", weight='15.0', 
-                package_type_code='02'),    # Customer Supplied Package
+            Helper.get_package(
+                "GB", weight='15.0', package_type_code='02'
+            ),  # Customer Supplied Package
 
             Helper.get_payment_info(AccountNumber=self.shipper_number),
             ShipmentConfirm.service_type(Code='11'),    # UPS Standard
-            Description = __doc__[:50]
-            )
+            Description=__doc__[:50]
+        )
         response = self.shipment_confirm_api.request(ship_confirm_request)
         digest = self.shipment_confirm_api.extract_digest(response)
 
         # now accept the package
         accept_request = ShipmentAccept.shipment_accept_request_type(digest)
-        result = self.shipment_accept_api.request(accept_request)
+        self.shipment_accept_api.request(accept_request)
 
     @unittest.skipUnless(datetime.today().weekday() == 4, "since not a friday")
     def test_0030_gb_gb_saturday(self):
@@ -110,25 +114,27 @@ class TestShippingPackage(unittest.TestCase):
             Helper.get_ship_from("GB"),
 
             # Package 1
-            Helper.get_package("GB", weight='15.0', 
-                package_type_code='02'),    # Customer Supplied Package
+            Helper.get_package(
+                "GB", weight='15.0', package_type_code='02'
+            ),    # Customer Supplied Package
 
             # Package 2
-            Helper.get_package("GB", weight='15.0', 
-                package_type_code='02'),    # Customer Supplied Package
+            Helper.get_package(
+                "GB", weight='15.0', package_type_code='02'
+            ),    # Customer Supplied Package
 
             ShipmentConfirm.shipment_service_option_type(SaturdayDelivery="1"),
 
             Helper.get_payment_info(AccountNumber=self.shipper_number),
             ShipmentConfirm.service_type(Code='11'),    # UPS Standard
-            Description = __doc__[:50]
-            )
+            Description=__doc__[:50]
+        )
         response = self.shipment_confirm_api.request(ship_confirm_request)
         digest = self.shipment_confirm_api.extract_digest(response)
 
         # now accept the package
         accept_request = ShipmentAccept.shipment_accept_request_type(digest)
-        result = self.shipment_accept_api.request(accept_request)
+        self.shipment_accept_api.request(accept_request)
 
     def test_0040_gb_us(self):
         "GB to US UPS Standard with 2 packages"
@@ -138,23 +144,25 @@ class TestShippingPackage(unittest.TestCase):
             Helper.get_ship_from("GB"),
 
             # Package 1
-            Helper.get_package("GB", weight='15.0', 
-                package_type_code='02'),    # Customer Supplied Package
+            Helper.get_package(
+                "GB", weight='15.0', package_type_code='02'
+            ),    # Customer Supplied Package
 
             # Package 2
-            Helper.get_package("GB", weight='15.0', 
-                package_type_code='02'),    # Customer Supplied Package
+            Helper.get_package(
+                "GB", weight='15.0', package_type_code='02'
+            ),    # Customer Supplied Package
 
             Helper.get_payment_info(AccountNumber=self.shipper_number),
             ShipmentConfirm.service_type(Code='07'),    # UPS Standard
-            Description = __doc__[:50]
-            )
+            Description=__doc__[:50]
+        )
         response = self.shipment_confirm_api.request(ship_confirm_request)
         digest = self.shipment_confirm_api.extract_digest(response)
 
         # now accept the package
         accept_request = ShipmentAccept.shipment_accept_request_type(digest)
-        result = self.shipment_accept_api.request(accept_request)
+        self.shipment_accept_api.request(accept_request)
 
 
 def suite():
@@ -162,7 +170,7 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTests(
         unittest.TestLoader().loadTestsFromTestCase(TestShippingPackage)
-        )
+    )
     return suite
 
 
