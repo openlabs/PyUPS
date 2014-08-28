@@ -574,7 +574,7 @@ class ShipmentConfirm(BaseAPIClient):
             :meth:`package_service_option_type`
         """
         elements = cls.make_elements(
-            ['PackagingType', 'PackageWeight', 'Dimensions'], args, kwargs)
+            ['PackagingType', 'PackageWeight'], args, kwargs)
         return E.Package(*elements)
 
     @classmethod
