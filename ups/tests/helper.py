@@ -87,7 +87,7 @@ class ShippingPackageHelper(object):
                 AddressLine1="205, Copper Gate House",
                 AddressLine2="16 Brune Street",
                 City="London",
-                #StateProvinceCode="E1 7NJ",
+                # StateProvinceCode="E1 7NJ",
                 CountryCode="GB",
                 PostalCode="E1 7NJ"
             )
