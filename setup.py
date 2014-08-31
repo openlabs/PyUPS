@@ -3,19 +3,19 @@
 '''
     Pythonic API to UPS® Shipping Services
 
-    :copyright: (c) 2010-2011 by Openlabs Technologies & Consulting (P) LTD
+    :copyright: (c) 2010-2013 by Openlabs Technologies & Consulting (P) LTD
     :copyright: (c) 2010 by Sharoon Thomas.
     :license: AGPL, see LICENSE for more details
 '''
+
 from setuptools import setup
 
-import ups
 
 setup(
     name='PyUPS',
-    version=ups.__version__,
+    version='0.4.5',
     license='AGPL',
-    author=ups.__author__,
+    author='Openlabs Technologies & Consulting (P) LTD',
     author_email='info@openlabs.co.in',
     url='http://openlabs.co.in',
     description="Python client to UPS® Shipping Webservice API",
@@ -24,10 +24,10 @@ setup(
     packages=[
         'ups',
         'ups.tests',
-        ],
+    ],
     install_requires=[
         'distribute',
         'lxml',
         'unittest2',
-        ]
+    ]
 )

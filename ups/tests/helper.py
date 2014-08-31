@@ -7,7 +7,7 @@
     :copyright: (c) 2011 by Openlabs Technologies & Consulting (P) Limited
     :license: AGPL, see LICENSE for more details.
 """
-from ups import ShipmentConfirm
+from ups.shipping_package import ShipmentConfirm
 
 
 class ShippingPackageHelper(object):
@@ -26,7 +26,7 @@ class ShippingPackageHelper(object):
                 City="Manchester",
                 CountryCode="GB",
                 PostalCode="M145EU"
-                )
+            )
         elif country == "US":
             shipper_address = ShipmentConfirm.address_type(
                 AddressLine1="245 NE 24th Street",
@@ -35,7 +35,7 @@ class ShippingPackageHelper(object):
                 StateProvinceCode="FL",
                 CountryCode="US",
                 PostalCode="33137"
-                )
+            )
         else:
             raise Exception("This country is not supported")
 
@@ -46,7 +46,7 @@ class ShippingPackageHelper(object):
             TaxIdentificationNumber="33065",
             PhoneNumber='0987654321',
             ShipperNumber=shipper_number,
-            )
+        )
 
     @staticmethod
     def get_ship_from(country="GB"):
@@ -58,7 +58,7 @@ class ShippingPackageHelper(object):
                 City="Manchester",
                 CountryCode="GB",
                 PostalCode="M145EU"
-                )
+            )
         elif country == "US":
             ship_from_address = ShipmentConfirm.address_type(
                 AddressLine1="245 NE 24th Street",
@@ -67,7 +67,7 @@ class ShippingPackageHelper(object):
                 StateProvinceCode="FL",
                 CountryCode="US",
                 PostalCode="33137"
-                )
+            )
         else:
             raise Exception("This country is not supported")
 
@@ -77,8 +77,8 @@ class ShippingPackageHelper(object):
             AttentionName="Someone other than Sharoon",
             TaxIdentificationNumber="33065",
             PhoneNumber='0987654321',
-            )
-    
+        )
+
     @staticmethod
     def get_ship_to(country="GB"):
         """Returns a shipto to a known country"""
@@ -87,10 +87,10 @@ class ShippingPackageHelper(object):
                 AddressLine1="205, Copper Gate House",
                 AddressLine2="16 Brune Street",
                 City="London",
-                #StateProvinceCode="E1 7NJ",
+                # StateProvinceCode="E1 7NJ",
                 CountryCode="GB",
                 PostalCode="E1 7NJ"
-                )
+            )
         elif country == "US":
             ship_to_address = ShipmentConfirm.address_type(
                 AddressLine1="1 Infinite Loop",
@@ -98,7 +98,7 @@ class ShippingPackageHelper(object):
                 StateProvinceCode="CA",
                 CountryCode="US",
                 PostalCode="95014"
-                )
+            )
         else:
             raise Exception("This country is not supported")
 
@@ -108,15 +108,16 @@ class ShippingPackageHelper(object):
             AttentionName="Someone other than Steve",
             TaxIdentificationNumber="123456",
             PhoneNumber='4089961010',
-            )
+        )
 
     @staticmethod
-    def get_package(country="GB", package_type_code='02', 
-            weight='14.1', dimensions=None):
+    def get_package(
+        country="GB", package_type_code='02', weight='14.1', dimensions=None
+    ):
         """UPS really expects units that are used in the country
-        
+
         :param package_type_code: Str of the Code
-        :param weight: Str eg '14.1' 
+        :param weight: Str eg '14.1'
         :param dimensions: A dict with length, width and height
             eg {'length': 10, 'width': 10, 'height': 10}
         """
@@ -125,25 +126,25 @@ class ShippingPackageHelper(object):
                 'length': '10',
                 'width': '10',
                 'height': '10',
-                }
+            }
         if country == "GB":
             package_weight = ShipmentConfirm.package_weight_type(
                 Weight=weight, Code="KGS", Description="Kilograms")
             dimensions = ShipmentConfirm.dimensions_type(
-                Code="CM", 
-                Length=dimensions['length'], 
-                Width=dimensions['width'], 
+                Code="CM",
+                Length=dimensions['length'],
+                Width=dimensions['width'],
                 Height=dimensions['height'],
-                )
+            )
         elif country == "US":
             package_weight = ShipmentConfirm.package_weight_type(
                 Weight=weight, Code="LBS", Description="Pounds")
             dimensions = ShipmentConfirm.dimensions_type(
-                Code="IN", 
-                Length=dimensions['length'], 
-                Width=dimensions['width'], 
+                Code="IN",
+                Length=dimensions['length'],
+                Width=dimensions['width'],
                 Height=dimensions['height'],
-                )
+            )
         else:
             raise Exception("This country is not supported")
 
@@ -153,7 +154,7 @@ class ShippingPackageHelper(object):
             package_type,
             package_weight,
             dimensions,
-            )
+        )
 
     @staticmethod
     def get_payment_info(type="prepaid", **kwargs):
@@ -169,7 +170,6 @@ class ShippingPackageHelper(object):
             return ShipmentConfirm.payment_information_type(
                 ShipmentConfirm.payment_information_prepaid_type(
                     AccountNumber=kwargs['AccountNumber'])
-                )
+            )
         else:
             raise Exception("Type %s is not supported" % type)
-
