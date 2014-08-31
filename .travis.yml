@@ -1,6 +1,4 @@
 language: python
-virtualenv:
-  system_site_packages: true
 python:
   - 2.7
 before_install:
@@ -8,5 +6,12 @@ before_install:
 install:
   - pip install flake8
   - python setup.py install
+  - pip install coveralls
 script:
+  - coverage run setup.py test
   - flake8 .
+after_success:
+  coveralls
+notifications:
+  email:
+    - ci-notify@openlabs.co.in
