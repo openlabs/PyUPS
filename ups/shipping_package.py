@@ -216,46 +216,43 @@ from base import BaseAPIClient, not_implemented_yet
 _logger_lock = Lock()
 
 
-class ShipmentConfirm(BaseAPIClient):
-    """Implements the ShipmentConfirmRequest"""
-
-    # Indicates the action to be taken by the XML service.
-    RequestAction = E.RequestAction('ShipConfirm')
-
-    # Optional Processing
-    # nonvalidate = No address validation.
-    # validate = Fail on failed address validation.
-    #
-    # Defaults to validate. Note: Full address validation is not performed.
-    # Therefore, it is the responsibility of the Shipping Tool User to ensure
-    # the address entered is correct to avoid an address correction fee.
-    RequestOption = E.RequestOption('nonvalidate')
-
-    # TransactionReference identifies transactions between client and server.
-    TransactionReference = E.TransactionReference(
-        E.CustomerContext('unspecified')
-    )
+class ShipmentMixin(object):
+    """
+    Common objects used by multiple APIs
+    """
 
     @classmethod
-    def ship_phone_type(cls, *args, **kwargs):
-        """Returns lXML Element for the phone_type
+    def shipper_type(cls, *args, **kwargs):
+        """Returns the shipper data type.
 
-        :param Number: TODO
-        :param Extension: TODO (Optional)
-
-        >>> from lxml import etree
-        >>> print etree.tostring(
-        ...     ShipmentConfirm.ship_phone_type(
-        ...         Number='number', Extension='extn'),
-        ...     pretty_print=True)
-        <Phone>
-          <Number>number</Number>
-          <Extension>extn</Extension>
-        </Phone>
-        <BLANKLINE>
+        :param Name: (Required)
+        :param ShipperNumber: (Required)
+        :param AttentionName: (Required)
+        :param TaxIdentificationNumber: (Required)
+        :param PhoneNumber: (Required)
+        :param FaxNumber: (Optional)
+        :param EMailAddress: (Optional)
+        :param Address: (Optional)
+        :param LocationID: (Optional)
         """
-        elements = cls.make_elements(['Number'], args, kwargs)
-        return E.Phone(*elements)
+        elements = cls.make_elements([], args, kwargs)
+        return E.Shipper(*elements)
+
+    @classmethod
+    def ship_to_type(cls, *args, **kwargs):
+        """Returns the ship to data type. (/ShipmentRequest/Shipment/ShipTo)
+        :param CompanyName: (Required)
+        :param AttentionName: (Required)
+        :param TaxIdentificationNumber: (Required)
+        :param PhoneNumber: (Conditionally Required)
+        :param FaxNumber: (Optional)
+        :param EMailAddress: (Optional)
+        :param Address: (Optional)
+        :param LocationID: (Optional)
+        :param ResidentialAddressIndicator: (optional)
+        """
+        elements = cls.make_elements([], args, kwargs)
+        return E.ShipTo(*elements)
 
     @classmethod
     def address_type(cls, *args, **kwargs):
@@ -314,42 +311,25 @@ class ShipmentConfirm(BaseAPIClient):
         return E.Address(*elements)
 
     @classmethod
-    def shipper_type(cls, *args, **kwargs):
-        """Returns the shipper data type.
+    def ship_phone_type(cls, *args, **kwargs):
+        """Returns lXML Element for the phone_type
 
-        :param Name: (Required)
-        :param ShipperNumber: (Required)
-        :param AttentionName: (Required)
-        :param TaxIdentificationNumber: (Required)
-        :param PhoneNumber: (Required)
-        :param FaxNumber: (Optional)
-        :param EMailAddress: (Optional)
-        :param Address: (Optional)
-        :param LocationID: (Optional)
-        """
-        required_args = (
-            'Name', 'AttentionName',
-            'TaxIdentificationNumber', 'PhoneNumber', 'ShipperNumber')
-        elements = cls.make_elements(required_args, args, kwargs)
-        return E.Shipper(*elements)
+        :param Number: TODO
+        :param Extension: TODO (Optional)
 
-    @classmethod
-    def ship_to_type(cls, *args, **kwargs):
-        """Returns the ship to data type. (/ShipmentRequest/Shipment/ShipTo)
-        :param CompanyName: (Required)
-        :param AttentionName: (Required)
-        :param TaxIdentificationNumber: (Required)
-        :param PhoneNumber: (Required)
-        :param FaxNumber: (Optional)
-        :param EMailAddress: (Optional)
-        :param Address: (Optional)
-        :param LocationID: (Optional)
+        >>> from lxml import etree
+        >>> print etree.tostring(
+        ...     ShipmentConfirm.ship_phone_type(
+        ...         Number='number', Extension='extn'),
+        ...     pretty_print=True)
+        <Phone>
+          <Number>number</Number>
+          <Extension>extn</Extension>
+        </Phone>
+        <BLANKLINE>
         """
-        required_args = (
-            'CompanyName', 'AttentionName',
-            'TaxIdentificationNumber', 'PhoneNumber',)
-        elements = cls.make_elements(required_args, args, kwargs)
-        return E.ShipTo(*elements)
+        elements = cls.make_elements(['Number'], args, kwargs)
+        return E.Phone(*elements)
 
     @classmethod
     def ship_from_type(cls, *args, **kwargs):
@@ -363,29 +343,22 @@ class ShipmentConfirm(BaseAPIClient):
         :param EMailAddress: (Optional)
         :param Address: (Optional)
         """
-        required_args = (
-            'CompanyName', 'AttentionName',
-            'TaxIdentificationNumber', 'PhoneNumber',)
-        elements = cls.make_elements(required_args, args, kwargs)
+        elements = cls.make_elements([], args, kwargs)
         return E.ShipFrom(*elements)
 
     @classmethod
-    @not_implemented_yet
-    def sold_to_type(cls, *args, **kwargs):
-        pass
-
-    @classmethod
-    @not_implemented_yet
-    def credit_card_type(cls, *args, **kwargs):
+    def package_type(cls, *args, **kwargs):
         """
-        Credit card information container
-        Required if
-        /ShipmentRequest/Shipment/PaymentInformation/ShipmentCharge/
-        BillShipper/AccountNumber
-        is not present. Credit card payment is valid for shipments without
-        return service only.
+        :param PackagingType: Generated from :meth:`packaging_type`
+        :param Description: Merchandise Description of the Package (Optional)
+        :param PackageWeight: Generated from :meth:`package_weight_type`
+        :param Dimensions: Generated from :meth:`dimensions_type`
+        :param PackageServiceOptions: Generated from
+            :meth:`package_service_option_type`
         """
-        pass
+        elements = cls.make_elements(
+            ['PackagingType', 'PackageWeight'], args, kwargs)
+        return E.Package(*elements)
 
     @classmethod
     def service_type(cls, *args, **kwargs):
@@ -432,56 +405,6 @@ class ShipmentConfirm(BaseAPIClient):
         """
         elements = cls.make_elements(['Code'], args, kwargs)
         return E.Service(*elements)
-
-    @classmethod
-    def payment_information_prepaid_type(cls, *args, **kwargs):
-        """
-        A payment method must be specified for the Bill Shipper billing option.
-        Therefore, either the AccountNumber child element or the CreditCard
-        child element must be provided, but not both.
-
-        Container for the BillShipper billing option. The two payment methods
-        that are available for the Bill Shipper billing option are account
-        number or credit card.
-
-        :param AccountNumber: Must be the same UPS account number as the one
-                              provided in Shipper/ShipperNumber. Either this
-                              element or the sibling element CreditCard must be
-                              provided, but both may not be provided.
-        :param CreditCard: Not Implemented Yet.
-        """
-        # TODO: When credit card is implemented ensure that the Element tag is
-        # CreditCard
-        elements = cls.make_elements(['AccountNumber'], args, kwargs)
-        return E.Prepaid(E.BillShipper(*elements))
-
-    @classmethod
-    def payment_information_type(cls, method):
-        """
-        This element or its sibling element, ItemizedPaymentInformation, must
-        be present but no more than one can be present. This API does not
-        implement ItemizedPaymentInformation yet.
-
-        The method must be one of:
-
-            * Prepaid: Use :meth:`payment_information_prepaid_type`
-            * BillThirdParty: TODO: Not Implemented yet
-            * FreightCollect: TODO: Not Implemented yet
-        """
-        return E.PaymentInformation(method)
-
-    @classmethod
-    def shipment_service_option_type(cls, *args, **kwargs):
-        """Service Options:
-
-        1. SaturdayDelivery: Available to all shipment types.
-
-        .. Warning::
-            It may not be possible to book saturday deliveries more than two
-            days in advance. Or in other words, SatudayDelivery can usually be
-            made only on bookings of Thrusday or Friday.
-        """
-        return E.ShipmentServiceOptions(*cls.make_elements([], args, kwargs))
 
     @classmethod
     def packaging_type(cls, *args, **kwargs):
@@ -564,18 +487,108 @@ class ShipmentConfirm(BaseAPIClient):
                                                  args, kwargs))
 
     @classmethod
-    def package_type(cls, *args, **kwargs):
+    def shipment_service_option_type(cls, *args, **kwargs):
+        """Service Options:
+
+        1. SaturdayDelivery: Available to all shipment types.
+
+        .. Warning::
+            It may not be possible to book saturday deliveries more than two
+            days in advance. Or in other words, SatudayDelivery can usually be
+            made only on bookings of Thrusday or Friday.
         """
-        :param PackagingType: Generated from :meth:`packaging_type`
-        :param Description: Merchandise Description of the Package (Optional)
-        :param PackageWeight: Generated from :meth:`package_weight_type`
-        :param Dimensions: Generated from :meth:`dimensions_type`
-        :param PackageServiceOptions: Generated from
-            :meth:`package_service_option_type`
+        return E.ShipmentServiceOptions(*cls.make_elements([], args, kwargs))
+
+    @classmethod
+    @not_implemented_yet
+    def credit_card_type(cls, *args, **kwargs):
         """
-        elements = cls.make_elements(
-            ['PackagingType', 'PackageWeight'], args, kwargs)
-        return E.Package(*elements)
+        Credit card information container
+        Required if
+        /ShipmentRequest/Shipment/PaymentInformation/ShipmentCharge/
+        BillShipper/AccountNumber
+        is not present. Credit card payment is valid for shipments without
+        return service only.
+        """
+        pass
+
+    @classmethod
+    def payment_information_prepaid_type(cls, *args, **kwargs):
+        """
+        A payment method must be specified for the Bill Shipper billing option.
+        Therefore, either the AccountNumber child element or the CreditCard
+        child element must be provided, but not both.
+
+        Container for the BillShipper billing option. The two payment methods
+        that are available for the Bill Shipper billing option are account
+        number or credit card.
+
+        :param AccountNumber: Must be the same UPS account number as the one
+                              provided in Shipper/ShipperNumber. Either this
+                              element or the sibling element CreditCard must be
+                              provided, but both may not be provided.
+        :param CreditCard: Not Implemented Yet.
+        """
+        # TODO: When credit card is implemented ensure that the Element tag is
+        # CreditCard
+        elements = cls.make_elements(['AccountNumber'], args, kwargs)
+        return E.Prepaid(E.BillShipper(*elements))
+
+    @classmethod
+    def rate_information_type(cls, negotiated=False, rate_chart=False):
+        """
+        Returns the RateInformation tab based on the given args
+        """
+        args = []
+
+        if negotiated:
+            args.append(E.NegotiatedRatesIndicator())
+
+        if rate_chart:
+            args.append(E.RateChartIndicator())
+
+        return E.RateInformation(*args)
+
+
+class ShipmentConfirm(ShipmentMixin, BaseAPIClient):
+    """Implements the ShipmentConfirmRequest"""
+
+    # Indicates the action to be taken by the XML service.
+    RequestAction = E.RequestAction('ShipConfirm')
+
+    # Optional Processing
+    # nonvalidate = No address validation.
+    # validate = Fail on failed address validation.
+    #
+    # Defaults to validate. Note: Full address validation is not performed.
+    # Therefore, it is the responsibility of the Shipping Tool User to ensure
+    # the address entered is correct to avoid an address correction fee.
+    RequestOption = E.RequestOption('nonvalidate')
+
+    # TransactionReference identifies transactions between client and server.
+    TransactionReference = E.TransactionReference(
+        E.CustomerContext('unspecified')
+    )
+
+    @classmethod
+    @not_implemented_yet
+    def sold_to_type(cls, *args, **kwargs):
+        pass
+
+    @classmethod
+    def payment_information_type(cls, method):
+        """
+        This element or its sibling element, ItemizedPaymentInformation, must
+        be present but no more than one can be present. This API does not
+        implement ItemizedPaymentInformation yet.
+
+        The method must be one of:
+
+            * Prepaid: Use :meth:`payment_information_prepaid_type`
+            * BillThirdParty: TODO: Not Implemented yet
+            * FreightCollect: TODO: Not Implemented yet
+        """
+        return E.PaymentInformation(method)
 
     @classmethod
     def label_print_method_type(cls, *args, **kwargs):
