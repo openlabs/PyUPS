@@ -39,7 +39,7 @@ class BaseAPIClient(object):
     #: and a sandbox request.
     base_url = {
         'sandbox': "https://wwwcie.ups.com/ups.app/xml",
-        'production': "https://www.ups.com/ups.app/xml/"
+        'production': "https://onlinetools.ups.com/ups.app/xml"
     }
 
     #: The logging format used for the debug logger.  This is only used when
