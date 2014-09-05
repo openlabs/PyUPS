@@ -113,7 +113,7 @@ class TestRatingPackage(unittest.TestCase):
         response = self.rating_api.request(rating_request)
 
         self.assertTrue(
-            hasattr(response.RatedShipment.NegotiatedRates)
+            hasattr(response.RatedShipment, 'NegotiatedRates')
         )
         self.assertTrue(
             response.RatedShipment.RatedPackage.TotalCharges.MonetaryValue
