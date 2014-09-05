@@ -88,7 +88,7 @@ class RatingService(ShipmentMixin, BaseAPIClient):
         """
         request = E.Request(
             cls.RequestAction,
-            cls.RequestOption,
+            kwargs.pop('RequestOption', cls.RequestOption),
             cls.TransactionReference,
         )
         return E.RatingServiceSelectionRequest(
