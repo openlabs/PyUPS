@@ -21,6 +21,7 @@ setup(
     description="Python client to UPS® Shipping Webservice API",
     long_description=__doc__,
     keywords="UPS®, Shipping, United Parcel Service of America®",
+    test_suite='ups.tests.suite',
     packages=[
         'ups',
         'ups.tests',
