@@ -1,17 +1,22 @@
 language: python
 python:
-  - 2.7
+- 2.7
 before_install:
-  - sudo apt-get install python-lxml
+- sudo apt-get install python-lxml
 install:
-  - pip install flake8
-  - python setup.py install
-  - pip install coveralls
+- pip install flake8
+- python setup.py install
+- pip install coveralls
 script:
-  - coverage run setup.py test
-  - flake8 .
-after_success:
-  coveralls
+- coverage run setup.py test
+- flake8 .
+after_success: coveralls
 notifications:
   email:
-    - ci-notify@openlabs.co.in
+  - ci-notify@openlabs.co.in
+env:
+  global:
+  - secure: LNGauWrckYry1hAQKYmIJ76ACURUgiyHxicKQPQ0h9uMzHHgVdm8NYRPTk0Q0OSJ0bXEtunxoTS3cURDUnH1HYpxxoqTU+lrhaHR0YEOT7rb+veDF9AxakqwMEcul+oDazeGEDZDd2QHatY83mtpIYZTN3+iu73iKSLnSnR9PAQ=
+  - secure: P2ij9W7SUjLituvPrjXq7BUm2BImwipCpVHsrEKP+yujMdFSarm6SEWpW7xDn7yDdokniTjKFzFOebR+t+J/BjXp0ltARKNDJ0dSFRRM8koDM4WBeGN0FW58rKUAUUaenmGpptrRnDUNf31I7tS1k3qtpQKj/oIRxcHYbMFriDw=
+  - secure: AupcKjxCkoVVfzUQv+mll3CpJLpeopXu4K6/4YJrFfz286Jc5iZxucTZZYS+w2qSOGPPFX8B8SN0+lC1GA3cRcg4ZD95WmkzF5IwK6dFF4hETXKtLrKC6FjKkM6QvuvdZeIEgCIJ66u/uEC/POCSOMD4rV/fnju+Otr8eFjjxGQ=
+  - secure: hW/4w1sKIZoBw6neDQrikpGuODz4Kbnz6wj7tBbgg/N+9VWLia8aRV2955BsXDYPVchrhXIhHhIZ1/51O+OhEJrQwgA9ja64dxwP1kE/3x2YxBvjqSwHghwpWBg8hvp4VOkxko4KIql7QyQcBUNfEhaA0OWELQLus9lNPkDahiY=
