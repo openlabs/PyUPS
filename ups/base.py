@@ -2,6 +2,7 @@
 
 from __future__ import with_statement
 
+import os
 from logging import getLogger, StreamHandler, Formatter, getLoggerClass, DEBUG
 from threading import Lock
 import urllib2
@@ -10,6 +11,9 @@ from lxml.builder import E
 
 
 _logger_lock = Lock()
+
+# Hide Debug Logs if Travis is providing secure env variables
+HIDE_DEBUG_LOGS = os.environ.get('TRAVIS_SECURE_ENV_VARS') == 'true'
 
 
 class PyUPSException(Exception):
@@ -85,7 +89,8 @@ class BaseAPIClient(object):
 
         class DebugLogger(Logger):
             def getEffectiveLevel(x):
-                return DEBUG if self.sandbox else Logger.getEffectiveLevel(x)
+                return DEBUG if self.sandbox and not HIDE_DEBUG_LOGS \
+                    else Logger.getEffectiveLevel(x)
 
         class DebugHandler(StreamHandler):
             def emit(x, record):
