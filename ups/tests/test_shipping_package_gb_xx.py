@@ -19,8 +19,8 @@ from datetime import datetime
 
 import unittest2 as unittest
 
-from ups.shipping_package import ShipmentConfirm, ShipmentAccept, \
-    PyUPSException
+from ups.shipping_package import ShipmentConfirm, ShipmentAccept
+from ups.base import PyUPSException
 from helper import ShippingPackageHelper as Helper
 
 

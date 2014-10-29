@@ -13,7 +13,7 @@ from datetime import datetime
 
 import unittest2 as unittest
 
-from ups import TimeInTransit
+from ups.time_in_transit import TimeInTransit
 
 
 class TestTimeInTransit(unittest.TestCase):

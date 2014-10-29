@@ -13,7 +13,7 @@ from setuptools import setup
 
 setup(
     name='PyUPS',
-    version='0.6.0',
+    version='0.6.1',
     license='AGPL',
     author='Openlabs Technologies & Consulting (P) LTD',
     author_email='info@openlabs.co.in',
@@ -21,6 +21,7 @@ setup(
     description="Python client to UPS® Shipping Webservice API",
     long_description=__doc__,
     keywords="UPS®, Shipping, United Parcel Service of America®",
+    test_suite='ups.tests.suite',
     packages=[
         'ups',
         'ups.tests',
