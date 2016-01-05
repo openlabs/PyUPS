@@ -148,7 +148,7 @@ class BaseAPIClient(object):
         """Sends data to the server on a request
         """
         request = urllib2.Request(url=url, data=data.encode("utf-8"))
-        return urllib2.urlopen(request).read()
+        return urllib2.urlopen(request, timeout=10).read()
 
     @classmethod
     def look_for_error(cls, response, request=None):
