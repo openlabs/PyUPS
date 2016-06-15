@@ -27,7 +27,6 @@ setup(
         'ups.tests',
     ],
     install_requires=[
-        'distribute',
         'lxml',
         'unittest2',
     ]
