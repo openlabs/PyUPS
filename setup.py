@@ -13,7 +13,7 @@ from setuptools import setup
 
 setup(
     name='PyUPS',
-    version='0.6.2',
+    version='0.6.3',
     license='AGPL',
     author='Openlabs Technologies & Consulting (P) LTD',
     author_email='info@openlabs.co.in',
@@ -27,7 +27,6 @@ setup(
         'ups.tests',
     ],
     install_requires=[
-        'distribute',
         'lxml',
         'unittest2',
     ]
